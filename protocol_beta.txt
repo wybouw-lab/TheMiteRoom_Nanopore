@@ -1,0 +1,45 @@
+vsearch --orient failed_all.fastq --fastqout failed_all_plus.fastq --db ~/16S_ref.fa
+
+python3 ~/scripts/umipore.py -i all.fastq -o amplicon_os -min 1300 -max 1750 -sk lsk114 -bcc custom_mites.csv -tr -bc_os -np 20
+
+python3 ~/scripts/amplicon_sorter.py -i . -o amplicon_sorter_97 -sc 97 -ar -min 1300 -max 1750 -np 20
+python3 ~/scripts/amplicon_sorter.py -i . -o amplicon_sorter_98 -sc 98 -ar -min 1300 -max 1750 -np 20
+python3 ~/scripts/amplicon_sorter.py -i . -o amplicon_sorter_99 -sc 99 -ar -min 1300 -max 1750 -np 20
+
+
+find . -name "*_consensussequences.fasta" -exec cp "{}" . \;
+
+rename -f 's/_consensussequences//' *fasta
+
+sed -i -e 's/consensus_//g' -e 's/(/;size=/g' -e 's/)//g' *fasta
+sed -i -e 's/_0_/._/g' *fasta
+sed -i -e 's/_1_/._/g' *fasta
+
+for file in *.fasta; do     SampleName=`basename $file .fasta`;     vsearch -sortbysize "$SampleName".fasta --output "$SampleName".sorted.fasta -minsize 2; done
+
+for file in *sorted.fasta; do         SampleName=`basename $file .sorted.fasta`;         usearch -unoise3 "$SampleName".sorted.fasta -zotus "$SampleName".zotus.fasta -tabbedout "$SampleName".denoising.summary.txt -minsize 1;     done
+
+mkdir sorted && mv *sorted.fasta sorted/
+
+mkdir denoising_summary && mv *denoising.summary.txt denoising_summary/
+
+for file in *zotus.fasta; do     SampleName=`basename $file .zotus.fasta`;     usearch -otutab "$SampleName".fasta -zotus "$SampleName".zotus.fasta -otutabout "$SampleName"_zotu_table.txt -threads 20; done
+
+for file in *zotus.fasta; do     SampleName=`basename $file .zotus.fasta`;     /home/diego/scripts/add_seq_to_zotu.py "$SampleName"_zotu_table.txt "$SampleName".zotus.fasta "$SampleName"_zotu_table_with_seq.txt; done
+
+mkdir raw_zotu && mv *_zotu_table.txt raw_zotu && mv *zotus.fasta raw_zotu
+
+mkdir zotu_tables_with_sequences && mv *zotu_table_with_seq.txt zotu_tables_with_sequences
+ 
+./test.py 
+
+usearch -cluster_otus zotus.fasta -otus otus.fasta -relabel OTU -uparseout zotu_otu_relationships.txt -threads 20
+
+sed -E 's/;size=[0-9].{0,}//g' zotus.fasta > new_zotus.fasta
+
+vsearch --sintax new_zotus.fasta -db /home/diego/databases/SILVA_endo_spikeins_RDP.fasta -tabbedout zotus.tax -strand both -sintax_cutoff 0.8
+
+vsearch --sintax otus.fasta -db /home/diego/databases/SILVA_endo_spikeins_RDP.fasta -tabbedout otus.tax -strand both -sintax_cutoff 0.8
+
+./test2.py 
+
