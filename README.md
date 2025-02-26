@@ -13,3 +13,5 @@ This method uses the [Amplicon sorter](https://github.com/avierstr/amplicon_sort
 
 
 #
+
+Here is the [link](https://zenodo.org/records/14930035) to download the formatted databases for the analysis
