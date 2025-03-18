@@ -24,7 +24,11 @@ current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 print(f"Current date and time: {current_time}")
 
 os.system(r"""find . -name "*_consensussequences.fasta" -exec cp "{}" . \;""")
-os.system("""rename -f 's/_consensussequences//' *fasta""")
+for filename in os.listdir():
+    if filename.endswith(".fasta"):
+        new_name = re.sub(r"_consensussequences", "", filename)
+        if new_name != filename:
+            os.rename(filename, new_name)
 
 counter = 0
 os.system('clear')
