@@ -1,5 +1,5 @@
-# tmr_nano
-A Nanopore amplicon sequencing approach based on consensus sequences
+# TMR_nano
+This is a 16S rRNA amplicon long-read sequencing approach to rapidly and accurately genotype symbionts of arthropods.
 
 <div align="center">
   <img height="200" src="https://github.com/diecasfranco/TheMiteRoom_Nanopore/blob/main/Spider-Mite_logoweb.jpg"  />
