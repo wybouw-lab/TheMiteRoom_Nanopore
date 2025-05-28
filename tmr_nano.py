@@ -330,9 +330,6 @@ for zOTU in zOTU_list:
 
 OUTPUT_TABLE.close()
 
-os.system("mkdir raw_zotu && mv *_zotu_table.txt raw_zotu && mv *zotus.fasta raw_zotu")
-os.system("mkdir zotu_tables_with_sequences && mv *zotu_table_with_seq.txt zotu_tables_with_sequences")
-
 print("zOTU_Table_expanded ready")
 
 
