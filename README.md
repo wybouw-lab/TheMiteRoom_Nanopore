@@ -1,5 +1,5 @@
 # tmr_nano
-A Nanopore Amplicon sequencing approach based on consensus sequences
+A Nanopore amplicon sequencing approach based on consensus sequences
 
 <div align="center">
   <img height="200" src="https://github.com/diecasfranco/TheMiteRoom_Nanopore/blob/main/Spider-Mite_logoweb.jpg"  />
